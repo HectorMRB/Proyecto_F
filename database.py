@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from peewee import *
 
 database = MySQLDatabase(
@@ -19,7 +19,7 @@ class Autor(Model):
 
 class Libro(Model):
     titulo = CharField(max_length=50)
-    autor = ForeignKeyField(Autor)
+    autor = ForeignKeyField(Autor, backref="libros")
     publicacion = IntegerField()
 
     class Meta:
@@ -38,7 +38,7 @@ class Usuario(Model):
 class Prestamo(Model):
     libro = ForeignKeyField(Libro)
     usuario = ForeignKeyField(Usuario)
-    fecha_p = DateField(default=datetime.now)
+    fecha_p = DateField(default=datetime.datetime.now)
     fecha_d = DateField(null=True)
 
     class Meta:
