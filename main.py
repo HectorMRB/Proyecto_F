@@ -3,6 +3,7 @@ from database import database as connection
 from database import Autor, Libro, Usuario, Prestamo
 from schemas import AutorBaseModel, LibroBaseModel, UsuarioBaseModel, LibroUpdateModel, PrestamoBaseModel, \
     PrestamoUpdateModel
+from peewee import fn
 
 app = FastAPI(
     title="Biblioteca",
@@ -76,6 +77,12 @@ async def get_libros():
             "publicacion": libro.publicacion
         })
     return resultado
+
+@app.get('/libros/top')
+async def libros_populares():
+    res = Prestamo.select(Prestamo.libro_id, fn.COUNT(Prestamo.id).alias('total')).group_by(Prestamo.libro_id)
+    return [{"libro_id": x.libro_id, "cantidad_prestamos": x.total} for x in res]
+
 
 @app.put('/libros/{libro_id}')
 async def update_libro(libro_id: int, datos: LibroUpdateModel):

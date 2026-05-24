@@ -30,11 +30,19 @@ def infoAutor():
         print(f"ID: {autor.get("id")} - Nombre: {autor.get("nombre")} - nacionalidad: {autor.get("nacionalidad")}")
     print("==================================================\n")
 
+def infoTopLibros():
+    respuesta = requests.get(f"{url}/libros/top")
+    print("\n==================== TOP LIBROS MÁS PRESTADOS ====================")
+    for item in respuesta.json():
+        print(f"ID Libro: {item.get('libro_id')} - Cantidad de Préstamos: {item.get('cantidad_prestamos')}")
+    print("==================================================================\n")
+
+
 def main():
     print("\n==== Bienvenido al sistema de la biblioteca central ====")
     eleccion = 0
 
-    while eleccion != 10:
+    while eleccion != 11:
         print("\n====== MENU ======")
         print("1) Registrar libros")
         print("2) Consultar libros")
@@ -45,7 +53,8 @@ def main():
         print("7) Actualizar devolucion préstamos")
         print("8) Consultar préstamos")
         print("9) Registar autores")
-        print("10) SALIR DEL SISTEMA")
+        print("10) Ver TOP libros más prestados")
+        print("11) SALIR DEL SISTEMA")
         print("====== MENU ======\n")
 
         eleccion = int(input("Digite su opcion: "))
@@ -140,6 +149,9 @@ def main():
                 respuesta = requests.post(f"{url}/autores/", json={"nombre": nombre, "nacionalidad": nacionalidad})
                 print(respuesta.json())
             case 10:
+                print("\nSeleccionó 'Ver TOP libros más prestados'")
+                infoTopLibros()
+            case 11:
                 print("Seleccionó 'SALIR DEL SISTEMA'")
             case _:
                 print("\nOpcion no valida")
