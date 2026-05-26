@@ -1,36 +1,34 @@
 from fastapi import FastAPI
 from database import database as connection
 from database import Autor, Libro, Usuario, Prestamo
-from schemas import AutorBaseModel, LibroBaseModel, UsuarioBaseModel, LibroUpdateModel, PrestamoBaseModel, \
-    PrestamoUpdateModel
+from schemas import AutorBaseModel, LibroBaseModel, UsuarioBaseModel, LibroUpdateModel, PrestamoBaseModel, PrestamoUpdateModel
 from peewee import fn
-
-app = FastAPI(
-    title="Biblioteca",
-    description="Pproyecto final",
-    version="1.0",
-)
+#Por depreciacición: "on_event is deprecated, use lifespan event handlers instead."
+from contextlib import asynccontextmanager
 
 
-@app.on_event("startup")
-async def startup():
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     print("El servidor esta iniciando")
     if connection.is_closed():
         connection.connect()
         print('se inicio la conexion con la base de datos')
 
-
     connection.create_tables([Autor, Libro, Usuario, Prestamo])
-
-
-
-@app.on_event("shutdown")
-async def shutdown():
+    #Yiel separa el incio del final del servidor
+    yield
     print("El servidor esta finalizando")
     if not connection.is_closed():
         connection.close()
         print('se finalizo la conexion con la base de datos')
 
+app = FastAPI(
+    lifespan=lifespan,
+    title="Biblioteca",
+    description="Pproyecto final",
+    version="2.0",
+)
 
 
 @app.get("/")
@@ -52,7 +50,8 @@ async def get_autors():
     for autor in autores:
         resultado.append({
             "id": autor.id,
-            "nombre": autor.nombre
+            "nombre": autor.nombre,
+            "nacionalidad": autor.nacionalidad
         })
     return resultado
 
