@@ -139,7 +139,6 @@ async def update_libro(libro_id: int, datos: LibroUpdateModel):
 
     return {"id": libro_id, "mensaje": "Libro actualizado"}
 
-
 @app.put('/prestamos/{prestamo_id}')
 async def update_prestamo(prestamo_id: int, datos: PrestamoUpdateModel):
     prestamo = Prestamo.get(Prestamo.id == prestamo_id)

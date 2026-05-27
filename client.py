@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-import asyncioG
+import asyncio
 import httpx
 
 url = "http://127.0.0.1:8000"
