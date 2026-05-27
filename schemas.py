@@ -21,6 +21,7 @@ class LibroBaseModel(BaseModel):
     def titulo_validar(cls, value):
         if len(value) < 3 or len(value) > 100:
             raise ValueError('La longitud debe contener minimo 3 caracteres y hasta 100 caracteres')
+        
     @field_validator('publicacion')
     def publicacion_validar(cls, value):
         anio = datetime.now().year
@@ -34,11 +35,22 @@ class LibroUpdateModel(BaseModel):
     autor_id: Optional[int] = None
     publicacion: Optional[int] = None
 
+    @field_validator('titulo')
+    def titulo_validar(cls, value):
+        if len(value) < 5 or len(value) > 500:
+            raise ValueError('La longitud debe contener minimo 5 caracteres y hasta 500 caracteres')
+        return value
 
 class UsuarioBaseModel(BaseModel):
     nombre: str
     matricula: str
     contrasena: str
+
+    @field_validator('nombre')
+    def nombre_validar(cls, value):
+        if len(value) < 5 or len(value) > 50:
+            raise ValueError('La longitud debe contener minimo 5 caracteres y hasta 50 caracteres')
+        return value.strip()
 
 class PrestamoBaseModel(BaseModel):
     libro_id: int
