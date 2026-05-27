@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-import asyncio
+import asyncioG
 import httpx
 
 url = "http://127.0.0.1:8000"
@@ -70,10 +70,12 @@ async def main():
                     nombre = input("Escriba el nombre: ")
 
                     await infoAutor(cliente)
-
-                    autor = int(input("Escriba el ID del autor: "))
-                    publicacion = int(input("Escriba el año de publicacion: "))
-
+                    try:
+                        autor = int(input("Escriba el ID del autor: "))
+                        publicacion = int(input("Escriba el año de publicacion: "))
+                    except ValueError:
+                        print("\nno se encontro id")
+                        continue
                     respuesta = await cliente.post("/libros/", json={"titulo": nombre, "autor_id": autor, "publicacion": publicacion})
 
                     print(respuesta.json())
@@ -105,7 +107,9 @@ async def main():
                 case 4:
                     print("\nSelecciono 'Registrar usuarios'")
                     nombre = input("Escriba el nombre del usuario: ")
-                    matricula = input("Escriba la matricula del usuario: ")
+                    matricula = input("Escriba la matricula 9 digitos: ")
+                    while len(matricula) != 9 or not matricula.isdigit():
+                        matricula = input("9 digitos: ")
                     contrasena = input("Contraseña: ")
 
                     respuesta = await cliente.post("/usuarios/", json={"nombre": nombre, "matricula": matricula, "contrasena": contrasena})

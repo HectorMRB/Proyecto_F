@@ -35,14 +35,6 @@ app = FastAPI(
 async def index():
     return "Biblioteca"
 
-@app.post('/autores/')
-async def create_autors(autor: AutorBaseModel):
-    autor_creado = Autor.create(
-        nombre=autor.nombre,
-        nacionalidad=autor.nacionalidad
-    )
-    return {"id": autor_creado.id, "mensaje": "Autor registrado"}
-
 @app.get('/autoresL/')
 async def get_autors():
     autores = Autor.select()
@@ -54,15 +46,6 @@ async def get_autors():
             "nacionalidad": autor.nacionalidad
         })
     return resultado
-
-@app.post('/libros/')
-async def create_libros(libro: LibroBaseModel):
-    libro_creado = Libro.create(
-        titulo=libro.titulo,
-        autor=libro.autor_id,
-        publicacion=libro.publicacion
-    )
-    return {"id": libro_creado.id, "mensaje": "Libro registrado"}
 
 @app.get('/librosL/')
 async def get_libros():
@@ -82,19 +65,22 @@ async def libros_populares():
     res = Prestamo.select(Prestamo.libro_id, fn.COUNT(Prestamo.id).alias('total')).group_by(Prestamo.libro_id)
     return [{"libro_id": x.libro_id, "cantidad_prestamos": x.total} for x in res]
 
+@app.post('/autores/')
+async def create_autors(autor: AutorBaseModel):
+    autor_creado = Autor.create(
+        nombre=autor.nombre,
+        nacionalidad=autor.nacionalidad
+    )
+    return {"id": autor_creado.id, "mensaje": "Autor registrado"}
 
-@app.put('/libros/{libro_id}')
-async def update_libro(libro_id: int, datos: LibroUpdateModel):
-    libro = Libro.get(Libro.id == libro_id)
-    if datos.titulo is not None:
-        libro.titulo = datos.titulo
-    if datos.autor_id is not None:
-        libro.autor_id = datos.autor_id
-    if datos.publicacion is not None:
-        libro.publicacion = datos.publicacion
-    libro.save()
-
-    return {"id": libro_id, "mensaje": "Libro actualizado"}
+@app.post('/libros/')
+async def create_libros(libro: LibroBaseModel):
+    libro_creado = Libro.create(
+        titulo=libro.titulo,
+        autor=libro.autor_id,
+        publicacion=libro.publicacion
+    )
+    return {"id": libro_creado.id, "mensaje": "Libro registrado"}
 
 @app.post('/usuarios/')
 async def create_usuario(usuario: UsuarioBaseModel):
@@ -139,6 +125,20 @@ async def get_prestamos():
             "fecha_d": prestamo.fecha_d,
         })
     return resultado
+
+@app.put('/libros/{libro_id}')
+async def update_libro(libro_id: int, datos: LibroUpdateModel):
+    libro = Libro.get(Libro.id == libro_id)
+    if datos.titulo is not None:
+        libro.titulo = datos.titulo
+    if datos.autor_id is not None:
+        libro.autor_id = datos.autor_id
+    if datos.publicacion is not None:
+        libro.publicacion = datos.publicacion
+    libro.save()
+
+    return {"id": libro_id, "mensaje": "Libro actualizado"}
+
 
 @app.put('/prestamos/{prestamo_id}')
 async def update_prestamo(prestamo_id: int, datos: PrestamoUpdateModel):
