@@ -47,6 +47,19 @@ async def get_autors():
         })
     return resultado
 
+@app.get('/usuariosL/')
+async def get_usuario():
+    usuario_creado = Usuario.select()
+    resultado = []
+    for usuario in usuario_creado:
+        resultado.append({
+            "id": usuario.id,
+            "nombre": usuario.nombre,
+            "matricula": usuario.matricula,
+            "contrasena": usuario.contrasena
+        })
+    return resultado
+
 @app.get('/librosL/')
 async def get_libros():
     libros = Libro.select()
@@ -57,6 +70,20 @@ async def get_libros():
             "titulo": libro.titulo,
             "autor_id": libro.autor.id,
             "publicacion": libro.publicacion
+        })
+    return resultado
+
+@app.get('/prestamosL/')
+async def get_prestamos():
+    prestamos = Prestamo.select()
+    resultado = []
+    for prestamo in prestamos:
+        resultado.append({
+            "id": prestamo.id,
+            "libro_id": prestamo.libro.id,
+            "usuario_id": prestamo.usuario.id,
+            "fecha_p": prestamo.fecha_p,
+            "fecha_d": prestamo.fecha_d,
         })
     return resultado
 
@@ -91,18 +118,6 @@ async def create_usuario(usuario: UsuarioBaseModel):
     )
     return {"id": usuario_creado.id, "mensaje": "Usuario registrado"}
 
-@app.get('/usuariosL/')
-async def get_usuario():
-    usuario_creado = Usuario.select()
-    resultado = []
-    for usuario in usuario_creado:
-        resultado.append({
-            "id": usuario.id,
-            "nombre": usuario.nombre,
-            "matricula": usuario.matricula,
-            "contrasena": usuario.contrasena
-        })
-    return resultado
 
 @app.post('/prestamos/')
 async def create_prestamo(prestamo: PrestamoBaseModel):
@@ -111,20 +126,6 @@ async def create_prestamo(prestamo: PrestamoBaseModel):
         usuario_id=prestamo.usuario_id,
     )
     return {"id:": prestamo_creado.id, "mensaje": "Prestamo registrado"}
-
-@app.get('/prestamosL/')
-async def get_prestamos():
-    prestamos = Prestamo.select()
-    resultado = []
-    for prestamo in prestamos:
-        resultado.append({
-            "id": prestamo.id,
-            "libro_id": prestamo.libro.id,
-            "usuario_id": prestamo.usuario.id,
-            "fecha_p": prestamo.fecha_p,
-            "fecha_d": prestamo.fecha_d,
-        })
-    return resultado
 
 @app.put('/libros/{libro_id}')
 async def update_libro(libro_id: int, datos: LibroUpdateModel):
