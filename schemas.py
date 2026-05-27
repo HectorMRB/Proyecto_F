@@ -21,7 +21,8 @@ class LibroBaseModel(BaseModel):
     def titulo_validar(cls, value):
         if len(value) < 3 or len(value) > 100:
             raise ValueError('La longitud debe contener minimo 3 caracteres y hasta 100 caracteres')
-        
+        return value
+    
     @field_validator('publicacion')
     def publicacion_validar(cls, value):
         anio = datetime.now().year
@@ -58,3 +59,11 @@ class PrestamoBaseModel(BaseModel):
 
 class PrestamoUpdateModel(BaseModel):
     fecha_d: str
+
+    @field_validator('fecha_d')
+    def fecha_d_validar(cls, value):
+        try:
+            datetime.strptime(value, "%Y-%m-%d")
+        except ValueError:
+            raise ValueError("La fecha debe tener el formato YYYY-MM-DD")
+        return value
